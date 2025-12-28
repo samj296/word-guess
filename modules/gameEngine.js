@@ -31,3 +31,27 @@ function getMaskedWord(game){
 
 };
 
+function applyGuess(game,letter){
+    if (game.status !== "in-progress"){
+        return
+    };
+    if (!game.guesses.has(letter)){
+        game.guesses.add(letter);
+        if (!game.word.includes(letter)){
+            game.remaining--
+        };
+    };
+
+    const word = game.word
+    const remaining = game.remaining
+
+    if (word.includes("_") && remaining <= 0){
+        game.status = "lost"
+    }else if(!word.includes("_")) {
+        game.status = "won"
+    }
+
+    return game
+}
+
+module.exports = {createGame, applyGuess, getMaskedWord};
