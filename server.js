@@ -1,7 +1,6 @@
 const express = require("express");
 const {v4: uuidv4} = require("uuid");
 const games ={}
-
 const {createGame, applyGuess, getMaskedWord} = require("./modules/gameEngine");
 
 const app = express();
@@ -38,21 +37,26 @@ app.post("/api/wordgame/:id/guess",(req, res)=>{
     };
     const game = games[id];
     applyGuess(game, body);
-    res.json(getMaskedWord(game))
+res.json({
+    "Word: " : getMaskedWord(game),
+    "Remaining: ": game.remaining,
+    "Status: " : game.status
+        })
 })
 
-app.get("/api/game/:id",(req, res) =>{
-    if(!games.includes(id)){
+app.get("/api/wordgame/:id",(req, res) =>{
+    const {id} = req.params;
+    if(!games[id]){
         res.status(400).json({"error": "Id does not exists"});
         return
     }
     const game = games[id];
-    const maskedWord = game.word;
+    let maskedWord = getMaskedWord(game);
     const remainingGuesses = game.remaining;
     const status = game.status;
     res.json({
         "Word: ": maskedWord,
         "Remaining: ": remainingGuesses,
-        "Stauts: ": status
+        "Status: ": status
     })
 })
