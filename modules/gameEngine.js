@@ -45,13 +45,25 @@ function applyGuess(game,letter){
     const word = game.word
     const remaining = game.remaining
 
-    if (word.includes("_") && remaining <= 0){
-        game.status = "lost"
-    }else if(!word.includes("_")) {
-        game.status = "won"
+    for(let i = 0; i< word.length; i++){
+        let letter = word[i];
+        if (!game.guesses.has(letter)){
+            if (game.remaining >= 1){
+                game.status = "in-progress";
+                return game
+            }else {
+                game.status = "lost";
+                return game
+            }
+            // only the last one is comparing if the last letter is present in the guesses
+            //because if in earlier loop the letter is not present then it should break the loop
+        }else if(i == word.length-1 && game.guesses.has(letter)){
+            game.status = "won";
+
+            return game
+        }
     }
 
-    return game
 }
 
 module.exports = {createGame, applyGuess, getMaskedWord};
