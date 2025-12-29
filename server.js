@@ -14,7 +14,7 @@ app.listen(port,()=>{
 
 
 
-app.post("/api/wordgame",(req, res)=>{
+app.get("/api/wordgame",(req, res)=>{
     const id = uuidv4();
     const game = createGame();
     games[id] = game;
@@ -25,23 +25,24 @@ app.post("/api/wordgame",(req, res)=>{
 app.post("/api/wordgame/:id/guess",(req, res)=>{
     const {id} = req.params;
     if (!games[id]){
-        res.status(400).json({"error": "Id does not exists"});
-        return;
+        return res.status(400).json({"error": "Id does not exists"});
+        ;
     };
     const {letter} = req.body;
     if(!letter){
-        res.status(400).json({error: "Body cannot be empty"});
+        return res.status(400).json({error: "Body cannot be empty"});
     };
-    if (body.length !== 1){
+    if (letter.length !== 1){
         return res.status(400).json({error: "Body must be 1 character"});
     };
     const game = games[id];
-    applyGuess(game, body);
-res.json({
-    "Word: " : getMaskedWord(game),
-    "Remaining: ": game.remaining,
-    "Status: " : game.status
-        })
+    applyGuess(game, letter);
+    let maskedWord = getMaskedWord(game)
+    res.json({
+        "Word: " : maskedWord,
+        "Remaining: ": game.remaining,
+        "Status: " : game.status
+            })
 })
 
 app.get("/api/wordgame/:id",(req, res) =>{
